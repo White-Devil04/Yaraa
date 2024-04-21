@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import STTButton from './STTButton';
+import SpeechToText from './SpeechToText';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
-function ChatApp() {
+function ChatApp({ flag, setFlag }) {
   const questions = [
     "Tell me about yourself",
     "What was your percentage in Last semester?",
@@ -12,6 +13,8 @@ function ChatApp() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
+  const [isListening, setIsListening] = useState(false); // State to track whether speech recognition is active
+  const recognitionRef = useRef(null); // Ref for SpeechRecognition object
 
   const hasSentInitialQuestion = useRef(false);
 
@@ -40,30 +43,43 @@ function ChatApp() {
         text: questions[index],
         isUserMessage: false, // false indicates this is a question from the interviewer
       };
-      setMessages(messages => [...messages, question]);
+      setMessages((prevMessages) => [...prevMessages, question]);
     }
   };
 
   const handleSpeechToText = (text) => {
     setMessages((prevMessages) => [...prevMessages, { text, isUserMessage: true }]);
   };
-  const handleOpenSTTDialog = () => {
-    // Use the SpeechRecognition API to transcribe the user's speech
-    const recognition = new window.webkitSpeechRecognition();
-    recognition.onresult = (event) => {
-      // Get the transcribed text from the event
+
+  const toggleListening = () => {
+    if (isListening) {
+      handleStopListening();
+    } else {
+      handleStartListening();
+    }
+    setIsListening(prevIsListening => !prevIsListening);
+  };
+
+  const handleStartListening = () => {
+    recognitionRef.current = new window.webkitSpeechRecognition();
+    recognitionRef.current.onresult = (event) => {
       const text = event.results[0][0].transcript;
-      // Add the transcribed text as a user message
       handleSpeechToText(text);
     };
-    // Start the speech recognition
-    recognition.start();
+    recognitionRef.current.start();
+  };
+
+  const handleStopListening = () => {
+    if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setFlag(false);
+    }
   };
 
   const downloadCSV = () => {
     const csvContent = messages.map((message, index) => {
       const question = index < questions.length ? questions[index] : '';
-      return `"${question}","${message.text}"`;
+      return "${question}","${message.text}"; // Corrected the syntax here
     }).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
@@ -77,16 +93,18 @@ function ChatApp() {
 
   return (
     <div>
-    <div>
-      {messages.map((message, index) => (
-        <p key={index} className={message.isUserMessage ? 'user-message' : 'received-message'}>
-          {message.text}
-        </p>
-      ))}
+      <div>
+        {messages.map((message, index) => (
+          <p key={index} className={message.isUserMessage ? 'user-message' : 'received-message'}>
+            {message.text}
+          </p>
+        ))}
+      </div>
+      <SpeechToText onTranscription={handleSpeechToText} /> {/* Use the SpeechToText component with the onTranscription prop */}
+      <button onClick={toggleListening}>{isListening ? 'Stop Listening' : 'Start Listening'}</button>
+      <br></br>
+      <button onClick={downloadCSV}>Download CSV</button>
     </div>
-    <button onClick={handleOpenSTTDialog}>Add message</button>
-    <button onClick={downloadCSV}>Download CSV</button>
-  </div>
   );
 }
 

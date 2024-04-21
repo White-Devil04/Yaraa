@@ -59,7 +59,7 @@
     flex-direction: column;
 }
 .container .virtualHR .HR {
-    height: 70%;
+    height: 95%;
     width:70%;
     border: 1px solid black;
     border-radius: 10px;

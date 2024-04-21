@@ -1,21 +1,18 @@
 import react, { useState } from 'react';
 import ChatApp from './ChatApp.js';
-import VideoApp from './VideoPlayer.js';
+import VideoPlayer from './VideoPlayer.js';
 import STTButton from './STTButton.js';
 function Container() {
-
+    const [flag, setFlag] = useState(false);
     return ( 
         <div className="container">
-            <div className="interviewText">
-                <ChatApp/>
-            </div>
             <div className='virtualHR'>
                 <div className='HR'>
-                    <VideoApp/>
+                 <VideoPlayer flag={flag} setFlag={setFlag} />
                 </div>
-                <div>
-                    <STTButton/>
-                </div>
+            </div>
+            <div className="interviewText">
+            <ChatApp flag={flag} setFlag={setFlag} />
             </div>
         </div>
      );
