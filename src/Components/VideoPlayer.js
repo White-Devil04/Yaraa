@@ -11,10 +11,11 @@ function VideoPlayer({ flag, setFlag }) {
   const videos = [video1, video2, video3, video4, video5];
   
   useEffect(() => {
-    if (!flag) {
-      setCurrentVideoIndex(0); // Start playing the first video when the flag is false
+    if (!flag && currentVideoIndex === 0) {
+      // Automatically start playing the first video if flag is false and it's the initial state
+      setCurrentVideoIndex(0);
     }
-  },[flag]);
+  }, [flag, currentVideoIndex]);
   
   const handleVideoEnd = () => {
     const nextVideoIndex = currentVideoIndex + 1;
@@ -22,19 +23,18 @@ function VideoPlayer({ flag, setFlag }) {
       setCurrentVideoIndex(nextVideoIndex);
     } else {
       setFlag(true); // Change the flag to true when all videos have been played
+      setCurrentVideoIndex(0); // Reset the video index to allow replay from the beginning if needed
     }
   };
-
-
-  // Removed the useEffect hook that was adding event listeners directly to the video element
 
   return (
     <div className="HRVideo">
       <ReactPlayer
-      url={videos[currentVideoIndex]}
-      playing={!flag} // Only play the video when the flag is false
-      onEnded={handleVideoEnd}
-    />
+        url={videos[currentVideoIndex]}
+        playing={!flag} // Only play the video when the flag is false
+        onEnded={handleVideoEnd}
+        controls // Add controls so users can play/pause manually if needed
+      />
     </div>
   );
 }

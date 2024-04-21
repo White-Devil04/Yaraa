@@ -79,7 +79,7 @@ function ChatApp({ flag, setFlag }) {
   const downloadCSV = () => {
     const csvContent = messages.map((message, index) => {
       const question = index < questions.length ? questions[index] : '';
-      return "${question}","${message.text}"; // Corrected the syntax here
+      return `${message.text}`; // Corrected the syntax here
     }).join('\n');
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
