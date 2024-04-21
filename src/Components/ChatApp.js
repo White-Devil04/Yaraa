@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import SpeechToText from './SpeechToText';
+import STTButton from './STTButton';
 
 function ChatApp() {
   const questions = [
@@ -77,16 +77,16 @@ function ChatApp() {
 
   return (
     <div>
-      <div>
-        {messages.map((message, index) => (
-          <p key={index} className={message.isUserMessage ? 'user-message' : 'received-message'}>
-            {message.text}
-          </p>
-        ))}
-      </div>
-      <SpeechToText onTranscription={handleSpeechToText} /> {/* Use the SpeechToText component with the onTranscription prop */}
-      <button onClick={downloadCSV}>Download CSV</button>
+    <div>
+      {messages.map((message, index) => (
+        <p key={index} className={message.isUserMessage ? 'user-message' : 'received-message'}>
+          {message.text}
+        </p>
+      ))}
     </div>
+    <button onClick={handleOpenSTTDialog}>Add message</button>
+    <button onClick={downloadCSV}>Download CSV</button>
+  </div>
   );
 }
 
