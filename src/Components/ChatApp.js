@@ -100,10 +100,13 @@ function ChatApp({ flag, setFlag }) {
           </p>
         ))}
       </div>
-      <SpeechToText onTranscription={handleSpeechToText} /> {/* Use the SpeechToText component with the onTranscription prop */}
+      <SpeechToText onTranscription={handleSpeechToText} /> 
+      {/* Use the SpeechToText component with the onTranscription prop */}
+        <div className='button'>
       <button onClick={toggleListening}>{isListening ? 'Stop Listening' : 'Start Listening'}</button>
-      <br></br>
       <button onClick={downloadCSV}>Download CSV</button>
+
+        </div>
     </div>
   );
 }
